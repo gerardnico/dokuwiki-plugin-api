@@ -6,6 +6,7 @@
  *
  * @group plugin_restapi
  * @group plugins
+ * @uses \PHPUnit\Framework\TestCase
  */
 class dokuwiki_plugin_restapi_test extends DokuWikiTest
 {
@@ -19,7 +20,7 @@ class dokuwiki_plugin_restapi_test extends DokuWikiTest
 
     static function setUpBeforeClass()
     {
-        self::$JSON = new JSON();
+        self::$JSON = new JSON(JSON_LOOSE_TYPE);
         $file = __DIR__ . '/../plugin.info.txt';
         self::$PLUGIN_INFO = confToHash($file);
 
@@ -77,12 +78,6 @@ class dokuwiki_plugin_restapi_test extends DokuWikiTest
     public function test_plugin_base_no_function()
     {
 
-
-        $pageId = "home";
-        $summaryDefault = 'Summary';
-        saveWikiText($pageId, 'Home Page', $summaryDefault);
-        idx_addPage($pageId);
-
         $expected = array(
             "api" => action_plugin_restapi::PLUGIN_NAME,
             "version" => self::$PLUGIN_INFO['date']
@@ -91,6 +86,33 @@ class dokuwiki_plugin_restapi_test extends DokuWikiTest
 
     }
 
+    /**
+     * Test the pages function
+     */
+    public function test_plugin_base_pages()
+    {
+
+        // Create a page
+        $pageId = "home";
+        $summaryDefault = 'Summary';
+        saveWikiText($pageId, 'Home Page', $summaryDefault);
+        idx_addPage($pageId);
+
+        $queryParameters = array(
+            'fn'=>'pages'
+        );
+        $response = self::getRequest($queryParameters);
+        $data = self::$JSON->decode($response->getContent());
+
+        $this->assertEquals(1, sizeof($data));
+        $expectedId=$data[0]['id'];
+        $this->assertEquals($expectedId, $pageId);
+
+    }
+
+    /**
+     * Utility functions are below
+     */
     /**
      * Will check the content of a response against a php array
      * @param $expected - an array of data
