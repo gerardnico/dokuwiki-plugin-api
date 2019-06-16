@@ -57,10 +57,12 @@ class  action_plugin_restapi extends DokuWiki_Action_Plugin
                 break;
             case 'version':
                 $wikiVersion = $remote->call('dokuwiki.getVersion');
+                $rpcVersion = $remote->call('wiki.getRPCVersionSupported');
                 $restApiVersion = $info['date'];
                 $data = array(
                     'wiki' => $wikiVersion,
                     'restapi' => $restApiVersion,
+                    'rpc' => $rpcVersion,
                 );
                 break;
             case 'wiki':
@@ -73,7 +75,27 @@ class  action_plugin_restapi extends DokuWiki_Action_Plugin
                 break;
             case 'pages':
                 $allPages = $remote->call('wiki.getAllPages');
-                $data = $allPages;
+                $data = array();
+                foreach ($allPages as $pages) {
+                    $pageData = array();
+                    $pageData['id'] = $pages['id'];
+                    $pageData['title']=tpl_pagetitle($pages['id'], true);
+                    $pageData['html'] = $remote->call('wiki.getPageHTML', array("pagename" => $pages['id']));
+                    $pageData['backlinks'] = $remote->call('wiki.getBackLinks', array("pagename" => $pages['id']));
+                    $allLinks = $remote->call('wiki.listLinks', array("pagename" => $pages['id']));
+                    $links=array();
+                    $externalLinks=array();
+                    foreach ($allLinks as $link){
+                        if ($link['type']=='local'){
+                            $links[]=$link['page'];
+                        } else {
+                            $externalLinks[]=$link['href'];
+                        }
+                    }
+                    $pageData['links']=$links;
+                    $pageData['external_links']=$externalLinks;
+                    $data[] = $pageData;
+                }
                 break;
             default:
                 $data = 'Function (' . $fn . ') was not found';
