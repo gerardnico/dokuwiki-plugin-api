@@ -14,20 +14,25 @@ if (!defined('DOKU_INC')) die();
  * @see RemoteAPI for the entry point
  * @see RemoteAPICore for the implementation of each functions
  */
-class  action_plugin_restapi extends DokuWiki_Action_Plugin{
+class  action_plugin_restapi extends DokuWiki_Action_Plugin
+{
 
+    const PLUGIN_NAME = 'restapi';
 
-
-    function register( Doku_Event_Handler $controller) {
-        $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE',  $this, '_ajax_call');
+    function register(Doku_Event_Handler $controller)
+    {
+        $controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this, '_ajax_call');
     }
 
     /**
      * handle ajax requests
+     * @param $event Doku_Event
      */
-    function _ajax_call(&$event, $param)
+    function _ajax_call(&$event)
     {
-        if ($event->data !== 'restapi') {
+        $info = confToHash(__DIR__ . '/plugin.info.txt');
+
+        if ($event->data !== self::getPluginName()) {
             return;
         }
         //no other ajax call handlers needed
@@ -35,31 +40,55 @@ class  action_plugin_restapi extends DokuWiki_Action_Plugin{
         $event->preventDefault();
 
         global $conf;
-        $conf['remote']=true;
-        $conf['remoteuser']='@ALL';
-        $remote = new RemoteAPI();
-        $wikiVersion = $remote->call('dokuwiki.getVersion');
-
-        $wikiTitle = $remote->call('dokuwiki.getTitle');
-
-
-        $allPages = $remote->call('wiki.getAllPages');
+        $conf['remote'] = true;
+        $conf['remoteuser'] = '@ALL';
+        $response_code = 200;
 
         global $INPUT;
-        $pageId =$INPUT->str('pageid');
-        $data=array(
-            'wikiVersion'=>$wikiVersion,
-            'wikiTitle'=>$wikiTitle,
+        $fn = $INPUT->str('fn');
 
-        );
-        $data = $allPages;
+        $remote = new RemoteAPI();
+        switch ($fn) {
+            case '':
+                $data = array(
+                    "api" => self::PLUGIN_NAME,
+                    "version" => $info['date']
+                );
+                break;
+            case 'version':
+                $wikiVersion = $remote->call('dokuwiki.getVersion');
+                $restApiVersion = $info['date'];
+                $data = array(
+                    'wiki' => $wikiVersion,
+                    'restapi' => $restApiVersion,
+                );
+                break;
+            case 'wiki':
+                $wikiTitle = $remote->call('dokuwiki.getTitle');
+                $wikiVersion = $remote->call('dokuwiki.getVersion');
+                $data = array(
+                    'version' => $wikiVersion,
+                    'title' => $wikiTitle,
+                );
+                break;
+            case 'pages':
+                $allPages = $remote->call('wiki.getAllPages');
+                $data = $allPages;
+                break;
+            default:
+                $data = 'Function (' . $fn . ') was not found';
+                $response_code = 404;
+        }
 
+
+        // Return
         require_once DOKU_INC . 'inc/JSON.php';
         $json = new JSON();
         header('Content-Type: application/json');
-        if($_GET["callback"]){
-            echo $_GET["callback"]."(".$json->encode($data).")";
-        }else {
+        http_response_code($response_code);
+        if ($_GET["callback"]) {
+            echo $_GET["callback"] . "(" . $json->encode($data) . ")";
+        } else {
             echo $json->encode($data);
         }
     }
