@@ -1,0 +1,7 @@
+base    restapi
+author  Nicolas GERARD
+email   gerardnico@gmail.com
+date    2019-06-14
+name    Rest API
+desc    A rest api implementation
+url     https://gerardnico.com/dokuwiki/restapi
