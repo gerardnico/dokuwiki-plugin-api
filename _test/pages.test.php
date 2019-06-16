@@ -48,13 +48,12 @@ class dokuwiki_plugin_restapi_pages_test extends DokuWikiTest
         saveWikiText($homePageId, 'Home Page', $summaryDefault);
         idx_addPage($homePageId);
 
-        // Backlinks
-        $backlinkHomePageId = "PageToHome";
-        $externalLink = 'https://gerardnico.com';
-        $backlinkHomePageTitle = 'Backlink Page Heading 1';
-        saveWikiText($backlinkHomePageId, '====== '.$backlinkHomePageTitle.'======'.DOKU_LF.
-            '[[home]] - [[' . $externalLink . ']]', $summaryDefault);
-        idx_addPage($backlinkHomePageId);
+        // A second page with a heading to test the titles
+        $secondPage = "PageToHome";
+        $secondPageTitle = 'Backlink Page Heading 1';
+        saveWikiText($secondPage, '====== '.$secondPageTitle.'======'.DOKU_LF.
+            'Whatever', $summaryDefault);
+        idx_addPage($secondPage);
 
 
         /**
@@ -81,35 +80,8 @@ class dokuwiki_plugin_restapi_pages_test extends DokuWikiTest
         $expectedTitle = $homePageId;
         $this->assertEquals($expectedTitle, $actualPageTitle, "A page title without header must be the page id");
         $actualPageTitle=$data[1]['title'];
-        $expectedTitle = $backlinkHomePageTitle;
+        $expectedTitle = $secondPageTitle;
         $this->assertEquals($expectedTitle, $actualPageTitle, "A page title with header must be the first heading");
-
-        // Html
-        $expectedHtml = DOKU_LF.'<p>'.DOKU_LF.'Home Page'.DOKU_LF.'</p>'.DOKU_LF;
-        $actualHtml=$data[0]['html'];
-        $this->assertEquals($expectedHtml, $actualHtml, "The Html must be the same");
-
-        // backlinks
-        $actualBacklinks=$data[0]['backlinks'];
-        $expectedBacklinks = array(
-            0 => $backlinkHomePageId
-        );
-        $this->assertEquals($expectedBacklinks, $actualBacklinks, "The Backlinks must be the same");
-
-        // internal links
-        $actualLinks=$data[1]['links'];
-        $expectedLinks = array(
-            0 => $homePageId
-        );
-        $this->assertEquals($expectedLinks, $actualLinks, "The links must be the same");
-
-        // external links
-        $actualExternalLinks=$data[1]['external_links'];
-        $expectedExternalLinks = array(
-            0 => $externalLink
-        );
-        $this->assertEquals($expectedExternalLinks, $actualExternalLinks, "The externals links must be the same");
-
 
 
 

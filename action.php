@@ -79,23 +79,34 @@ class  action_plugin_restapi extends DokuWiki_Action_Plugin
                 foreach ($allPages as $pages) {
                     $pageData = array();
                     $pageData['id'] = $pages['id'];
-                    $pageData['title']=tpl_pagetitle($pages['id'], true);
-                    $pageData['html'] = $remote->call('wiki.getPageHTML', array("pagename" => $pages['id']));
-                    $pageData['backlinks'] = $remote->call('wiki.getBackLinks', array("pagename" => $pages['id']));
-                    $allLinks = $remote->call('wiki.listLinks', array("pagename" => $pages['id']));
-                    $links=array();
-                    $externalLinks=array();
-                    foreach ($allLinks as $link){
-                        if ($link['type']=='local'){
-                            $links[]=$link['page'];
-                        } else {
-                            $externalLinks[]=$link['href'];
-                        }
-                    }
-                    $pageData['links']=$links;
-                    $pageData['external_links']=$externalLinks;
+                    $pageData['title'] = tpl_pagetitle($pages['id'], true);
                     $data[] = $pageData;
                 }
+                break;
+            case 'page':
+                $id = $INPUT->str('id');
+                if ($id == '') {
+                    $response_code = 400;
+                    $data = array(
+                        'error' => 'The id query parameters is mandatory when asking data of a page'
+                    );
+                    break;
+                }
+                $data['title'] = tpl_pagetitle($id, true);
+                $data['html'] = $remote->call('wiki.getPageHTML', array("pagename" => $id));
+                $data['backlinks'] = $remote->call('wiki.getBackLinks', array("pagename" => $id));
+                $allLinks = $remote->call('wiki.listLinks', array("pagename" => $id));
+                $links = array();
+                $externalLinks = array();
+                foreach ($allLinks as $link) {
+                    if ($link['type'] == 'local') {
+                        $links[] = $link['page'];
+                    } else {
+                        $externalLinks[] = $link['href'];
+                    }
+                }
+                $data['links'] = $links;
+                $data['external_links'] = $externalLinks;
                 break;
             default:
                 $data = 'Function (' . $fn . ') was not found';
