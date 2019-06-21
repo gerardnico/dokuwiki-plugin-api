@@ -4,7 +4,7 @@
 /**
  * Static Test Utility Function
  */
-class dokuwiki_plugin_restapi_util
+class dokuwiki_plugin_api_util
 {
 
     /**
@@ -26,7 +26,7 @@ class dokuwiki_plugin_restapi_util
      */
     public static function getRequest($queryParams=array()):TestResponse {
         $request = new TestRequest();
-        $queryParams['call'] = action_plugin_restapi::PLUGIN_NAME;
+        $queryParams['call'] = action_plugin_api::PLUGIN_NAME;
         $testResponse = $request->get($queryParams, '/lib/exe/ajax.php');
         return $testResponse;
 

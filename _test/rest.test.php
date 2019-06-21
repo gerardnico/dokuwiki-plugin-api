@@ -2,22 +2,22 @@
 
 
 /**
- * Test the restapi plugin
+ * Test the api plugin
  *
- * @group plugin_restapi
+ * @group plugin_api
  * @group plugins
  * @uses \PHPUnit\Framework\TestCase
  */
 include_once (__DIR__.'/utils.php');
-class dokuwiki_plugin_restapi_test extends DokuWikiTest
+class dokuwiki_plugin_api_test extends DokuWikiTest
 {
 
-    protected $pluginsEnabled = array(action_plugin_restapi::PLUGIN_NAME);
+    protected $pluginsEnabled = array(action_plugin_api::PLUGIN_NAME);
 
     static function setUpBeforeClass()
     {
 
-        dokuwiki_plugin_restapi_util::init();
+        dokuwiki_plugin_api_util::init();
 
     }
 
@@ -27,10 +27,10 @@ class dokuwiki_plugin_restapi_test extends DokuWikiTest
     public function test_pluginInfoTxt()
     {
 
-        $info = dokuwiki_plugin_restapi_util::$PLUGIN_INFO;
+        $info = dokuwiki_plugin_api_util::$PLUGIN_INFO;
 
         $this->assertArrayHasKey('base', $info);
-        $this->assertEquals(action_plugin_restapi::PLUGIN_NAME, $info['base']);
+        $this->assertEquals(action_plugin_api::PLUGIN_NAME, $info['base']);
 
         $this->assertArrayHasKey('author', $info);
         $this->assertArrayHasKey('name', $info);
@@ -58,9 +58,9 @@ class dokuwiki_plugin_restapi_test extends DokuWikiTest
         global $plugin_controller;
         $this->assertTrue(
             in_array(
-                action_plugin_restapi::PLUGIN_NAME,
+                action_plugin_api::PLUGIN_NAME,
                 $plugin_controller->getList()),
-            action_plugin_restapi::PLUGIN_NAME . " plugin is loaded"
+            action_plugin_api::PLUGIN_NAME . " plugin is loaded"
         );
     }
 
@@ -72,12 +72,12 @@ class dokuwiki_plugin_restapi_test extends DokuWikiTest
     {
 
         $expected = array(
-            "api" => action_plugin_restapi::PLUGIN_NAME,
-            "version" => dokuwiki_plugin_restapi_util::$PLUGIN_INFO['date']
+            "api" => action_plugin_api::PLUGIN_NAME,
+            "version" => dokuwiki_plugin_api_util::$PLUGIN_INFO['date']
         );
 
-        $testResponse = dokuwiki_plugin_restapi_util::getRequest();
-        $actualData = dokuwiki_plugin_restapi_util::$JSON->decode($testResponse->getContent());
+        $testResponse = dokuwiki_plugin_api_util::getRequest();
+        $actualData = dokuwiki_plugin_api_util::$JSON->decode($testResponse->getContent());
         $this->assertEquals($expected,$actualData,"Information about the API is given");
 
     }

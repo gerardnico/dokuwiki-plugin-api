@@ -2,18 +2,18 @@
 
 
 /**
- * Test the restapi plugin
+ * Test the endpoint page of the api plugin
  *
- * @group plugin_restapi
+ * @group plugin_api
  * @group plugins
  * @uses \PHPUnit\Framework\TestCase
  */
 include_once(__DIR__ . '/utils.php');
 
-class dokuwiki_plugin_restapi_page_test extends DokuWikiTest
+class dokuwiki_plugin_api_page_test extends DokuWikiTest
 {
 
-    protected $pluginsEnabled = array(action_plugin_restapi::PLUGIN_NAME);
+    protected $pluginsEnabled = array(action_plugin_api::PLUGIN_NAME);
     /**
      * @var JSON
      */
@@ -64,7 +64,7 @@ class dokuwiki_plugin_restapi_page_test extends DokuWikiTest
             'fn' => 'page',
             'id' => $homePageId
         );
-        $response = dokuwiki_plugin_restapi_util::getRequest($queryParameters);
+        $response = dokuwiki_plugin_api_util::getRequest($queryParameters);
         $data = self::$JSON->decode($response->getContent());
 
         /**
@@ -96,7 +96,7 @@ class dokuwiki_plugin_restapi_page_test extends DokuWikiTest
             'fn' => 'page',
             'id' => $backlinkHomePageId
         );
-        $response = dokuwiki_plugin_restapi_util::getRequest($queryParameters);
+        $response = dokuwiki_plugin_api_util::getRequest($queryParameters);
         $data = self::$JSON->decode($response->getContent());
 
         // Title

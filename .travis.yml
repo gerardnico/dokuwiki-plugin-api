@@ -14,7 +14,7 @@ install:
   - sh travis.sh
 
 script:
-  - cd _test && phpunit --stderr --group plugin_restapi --verbose --debug
+  - cd _test && phpunit --stderr --group plugin_api --verbose --debug
 
 notifications:
   email:

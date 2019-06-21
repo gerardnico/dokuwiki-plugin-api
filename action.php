@@ -3,21 +3,21 @@
 if (!defined('DOKU_INC')) die();
 
 /**
- * Class action_plugin_restapi
+ * Class action_plugin_api
  * Implements a rest api wrapper around XML rpc
  *
  * https://www.dokuwiki.org/devel:xmlrpc
  *
  * Test:
- * http://localhost:81/lib/exe/ajax.php?call=restapi
+ * http://localhost:81/lib/exe/ajax.php?call=api
  *
  * @see RemoteAPI for the entry point
  * @see RemoteAPICore for the implementation of each functions
  */
-class  action_plugin_restapi extends DokuWiki_Action_Plugin
+class  action_plugin_api extends DokuWiki_Action_Plugin
 {
 
-    const PLUGIN_NAME = 'restapi';
+    const PLUGIN_NAME = 'api';
 
     function register(Doku_Event_Handler $controller)
     {
@@ -58,10 +58,10 @@ class  action_plugin_restapi extends DokuWiki_Action_Plugin
             case 'version':
                 $wikiVersion = $remote->call('dokuwiki.getVersion');
                 $rpcVersion = $remote->call('wiki.getRPCVersionSupported');
-                $restApiVersion = $info['date'];
+                $pluginApiVersion = $info['date'];
                 $data = array(
                     'wiki' => $wikiVersion,
-                    'restapi' => $restApiVersion,
+                    self::PLUGIN_NAME => $pluginApiVersion,
                     'rpc' => $rpcVersion,
                 );
                 break;
@@ -77,6 +77,9 @@ class  action_plugin_restapi extends DokuWiki_Action_Plugin
                 $allPages = $remote->call('wiki.getAllPages');
                 $data = array();
                 $limit = $INPUT->str('limit');
+                if (!$limit){
+                    $limit = PHP_INT_MAX;
+                }
                 foreach ($allPages as $key => $pages) {
                     $pageData = array();
                     $pageData['id'] = $pages['id'];

@@ -1,10 +1,37 @@
-# Dokuwiki Rest Api Plugin
+# Dokuwiki (Rest) Api Plugin
 
-[![Build Status](https://travis-ci.org/gerardnico/dokuwiki-plugin-restapi.svg?branch=master)](https://travis-ci.org/gerardnico/dokuwiki-plugin-restapi)
+[![Build Status](https://travis-ci.org/gerardnico/dokuwiki-plugin-api.svg?branch=master)](https://travis-ci.org/gerardnico/dokuwiki-plugin-api)
 
 ## About
 
-This is a Dokuwiki plugin that implements a rest API for Dokuwiki.
+This is a Dokuwiki plugin that implements a rest API for Dokuwiki in order to use DokuWiki as a backend Content Management System (CMS).
+
+
+## Permissions
+All requests are made with the `public` permissions (ie [@ALL group](https://www.dokuwiki.org/acl))
+
+## Endpoints
+
+### pages
+`pages` returns a list of all pages
+ 
+```
+http://localhost:81/lib/exe/ajax.php?call=api&pages
+```
+Request Query parameters:
+  * `limit` : the max numberpage id (known also under [pagename](https://www.dokuwiki.org/pagename))
+
+
+### page
+
+`page` returns much more information on a page than [pages](#pages)
+
+```
+http://localhost:81/lib/exe/ajax.php?call=api&page
+```
+
+Query parameters:
+  * `id` : the page id (known also under [pagename](https://www.dokuwiki.org/pagename))
 
 ## Configuration
 
@@ -14,7 +41,7 @@ You need to change them in your configuration.
 
 ### Relative URL
 
-See https://www.dokuwiki.org/config:canonical
+If you want relative URL in the exported HTML. See https://www.dokuwiki.org/config:canonical
 
 ### Base Directory
 
