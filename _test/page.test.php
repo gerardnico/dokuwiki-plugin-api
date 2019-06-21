@@ -13,6 +13,8 @@ include_once(__DIR__ . '/utils.php');
 class dokuwiki_plugin_api_page_test extends DokuWikiTest
 {
 
+    const ENDPOINT_NAME = 'page';
+
     protected $pluginsEnabled = array(action_plugin_api::PLUGIN_NAME);
     /**
      * @var JSON
@@ -42,18 +44,19 @@ class dokuwiki_plugin_api_page_test extends DokuWikiTest
         /**
          * Set things up
          */
-        // Create a page
-        $homePageId = "home";
+        // Create a page, the endpoint namespace is important to avoid race condition with other test
+        $homePageId = self::ENDPOINT_NAME."home";
         $summaryDefault = 'Summary';
         saveWikiText($homePageId, 'Home Page', $summaryDefault);
         idx_addPage($homePageId);
 
         // Backlinks
-        $backlinkHomePageId = "PageToHome";
+        // The endpoint namespace is important to avoid race condition with other test
+        $backlinkHomePageId = self::ENDPOINT_NAME."PageWithLinkToHome";
         $externalLink = 'https://gerardnico.com';
         $backlinkHomePageTitle = 'Backlink Page Heading 1';
         saveWikiText($backlinkHomePageId, '====== ' . $backlinkHomePageTitle . '======' . DOKU_LF .
-            '[[home]] - [[' . $externalLink . ']]', $summaryDefault);
+            '[['.$homePageId.']] - [[' . $externalLink . ']]', $summaryDefault);
         idx_addPage($backlinkHomePageId);
 
 
@@ -61,7 +64,7 @@ class dokuwiki_plugin_api_page_test extends DokuWikiTest
          * Query Home page
          */
         $queryParameters = array(
-            'fn' => 'page',
+            'fn' => self::ENDPOINT_NAME,
             'id' => $homePageId
         );
         $response = dokuwiki_plugin_api_util::getRequest($queryParameters);
