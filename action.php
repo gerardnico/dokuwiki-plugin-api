@@ -76,11 +76,15 @@ class  action_plugin_restapi extends DokuWiki_Action_Plugin
             case 'pages':
                 $allPages = $remote->call('wiki.getAllPages');
                 $data = array();
-                foreach ($allPages as $pages) {
+                $limit = $INPUT->str('limit');
+                foreach ($allPages as $key => $pages) {
                     $pageData = array();
                     $pageData['id'] = $pages['id'];
                     $pageData['title'] = tpl_pagetitle($pages['id'], true);
                     $data[] = $pageData;
+                    if ($key >= $limit - 1) {
+                        break;
+                    }
                 }
                 break;
             case 'page':

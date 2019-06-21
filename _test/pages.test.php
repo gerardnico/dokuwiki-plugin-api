@@ -87,6 +87,42 @@ class dokuwiki_plugin_restapi_pages_test extends DokuWikiTest
 
     }
 
+    /**
+     * Test the max pages parameters
+     */
+    public function test_plugin_pages_limit()
+    {
+
+
+        /**
+         * Set things up
+         */
+        // Create 10 pages
+        for ($i = 1; $i <= 10; $i++) {
+            saveWikiText($i, 'Text for the page '.$i, "summary for page ".$i);
+            idx_addPage($i);
+        }
+
+        /**
+         * Query
+         */
+        $limit = 3;
+        $queryParameters = array(
+            'fn'=>'pages',
+            'limit'=> $limit
+        );
+        $response = dokuwiki_plugin_restapi_util::getRequest($queryParameters);
+        $data = self::$JSON->decode($response->getContent());
+
+        /**
+         * Test
+         */
+        // Max pages
+        $this->assertEquals($limit, sizeof($data),"The number of page is equal t max");
+
+
+    }
+
 
 
 
