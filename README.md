@@ -16,10 +16,10 @@ All requests are made with the `public` permissions (ie [@ALL group](https://www
 `pages` returns a list of all pages
  
 ```
-http://localhost:81/lib/exe/ajax.php?call=api&pages
+http://localhost:81/lib/exe/ajax.php?call=api&fn=pages&limit=10
 ```
 Request Query parameters:
-  * `limit` : the max numberpage id (known also under [pagename](https://www.dokuwiki.org/pagename))
+  * `limit` : the max number of pages (known also under [pagename](https://www.dokuwiki.org/pagename))
 
 
 ### page
@@ -27,7 +27,7 @@ Request Query parameters:
 `page` returns much more information on a page than [pages](#pages)
 
 ```
-http://localhost:81/lib/exe/ajax.php?call=api&page
+http://localhost:81/lib/exe/ajax.php?call=api&fn=page
 ```
 
 Query parameters:
