@@ -50,3 +50,10 @@ See https://www.dokuwiki.org/config:basedir The DOKU_BASE constant.
 Used in the `wl` function of the `common.php` file to create a link.
 
 
+## Changes
+
+### 2023-06-09
+
+* `RemoteApi` dokuwiki class was renamed to `API`
+* Php8 ready
+* The Xml Call does not take `pagename` as array key

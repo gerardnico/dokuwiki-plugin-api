@@ -25,10 +25,14 @@ class dokuwiki_plugin_api_util
      * @return TestResponse - A response
      */
     public static function getRequest($queryParams=array()):TestResponse {
+
+        global $USERINFO;
+        $USERINFO['grps']=[];
+
+
         $request = new TestRequest();
         $queryParams['call'] = action_plugin_api::PLUGIN_NAME;
-        $testResponse = $request->get($queryParams, '/lib/exe/ajax.php');
-        return $testResponse;
+        return $request->get($queryParams, '/lib/exe/ajax.php');
 
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+use dokuwiki\Remote\Api;
+
 if (!defined('DOKU_INC')) die();
 
 /**
@@ -47,7 +49,8 @@ class  action_plugin_api extends DokuWiki_Action_Plugin
         global $INPUT;
         $fn = $INPUT->str('fn');
 
-        $remote = new RemoteAPI();
+        //$remote = new RemoteAPI();
+        $remote = new API();
         switch ($fn) {
             case '':
                 $data = array(
@@ -77,7 +80,7 @@ class  action_plugin_api extends DokuWiki_Action_Plugin
                 $allPages = $remote->call('wiki.getAllPages');
                 $data = array();
                 $limit = $INPUT->str('limit');
-                if (!$limit){
+                if (!$limit) {
                     $limit = PHP_INT_MAX;
                 }
                 foreach ($allPages as $key => $pages) {
@@ -100,9 +103,9 @@ class  action_plugin_api extends DokuWiki_Action_Plugin
                     break;
                 }
                 $data['title'] = tpl_pagetitle($id, true);
-                $data['html'] = $remote->call('wiki.getPageHTML', array("pagename" => $id));
-                $data['backlinks'] = $remote->call('wiki.getBackLinks', array("pagename" => $id));
-                $allLinks = $remote->call('wiki.listLinks', array("pagename" => $id));
+                $data['html'] = $remote->call('wiki.getPageHTML', array($id));
+                $data['backlinks'] = $remote->call('wiki.getBackLinks', array($id));
+                $allLinks = $remote->call('wiki.listLinks', array($id));
                 $links = array();
                 $externalLinks = array();
                 foreach ($allLinks as $link) {
@@ -122,14 +125,13 @@ class  action_plugin_api extends DokuWiki_Action_Plugin
 
 
         // Return
-        require_once DOKU_INC . 'inc/JSON.php';
-        $json = new JSON();
+
         header('Content-Type: application/json');
         http_response_code($response_code);
-        if ($_GET["callback"]) {
-            echo $_GET["callback"] . "(" . $json->encode($data) . ")";
+        if ($_GET["callback"] ?? null) {
+            echo $_GET["callback"] . "(" . json_encode($data) . ")";
         } else {
-            echo $json->encode($data);
+            echo json_encode($data);
         }
     }
 

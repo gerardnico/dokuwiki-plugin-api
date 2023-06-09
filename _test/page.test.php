@@ -20,9 +20,8 @@ class dokuwiki_plugin_api_page_test extends DokuWikiTest
      * @var JSON
      */
     private static $JSON;
-    private static $PLUGIN_INFO;
 
-    static function setUpBeforeClass()
+    static function setUpBeforeClass(): void
     {
         self::$JSON = new JSON(JSON_LOOSE_TYPE);
         $file = __DIR__ . '/../plugin.info.txt';
@@ -123,5 +122,5 @@ class dokuwiki_plugin_api_page_test extends DokuWikiTest
 
 
     }
-    
+
 }

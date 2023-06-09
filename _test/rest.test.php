@@ -14,7 +14,7 @@ class dokuwiki_plugin_api_test extends DokuWikiTest
 
     protected $pluginsEnabled = array(action_plugin_api::PLUGIN_NAME);
 
-    static function setUpBeforeClass()
+    static function setUpBeforeClass(): void
     {
 
         dokuwiki_plugin_api_util::init();
