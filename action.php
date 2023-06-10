@@ -103,6 +103,7 @@ class  action_plugin_api extends DokuWiki_Action_Plugin
                     break;
                 }
                 $data['title'] = tpl_pagetitle($id, true);
+                $data['metadata'] = p_get_metadata($id);
                 $data['html'] = $remote->call('wiki.getPageHTML', array($id));
                 $data['backlinks'] = $remote->call('wiki.getBackLinks', array($id));
                 $allLinks = $remote->call('wiki.listLinks', array($id));
@@ -117,6 +118,17 @@ class  action_plugin_api extends DokuWiki_Action_Plugin
                 }
                 $data['links'] = $links;
                 $data['external_links'] = $externalLinks;
+                break;
+            case 'metadata':
+                $id = $INPUT->str('id');
+                if ($id == '') {
+                    $response_code = 400;
+                    $data = array(
+                        'error' => 'The id query parameters is mandatory when asking data of a page'
+                    );
+                    break;
+                }
+                $data = p_get_metadata($id);
                 break;
             default:
                 $data = 'Function (' . $fn . ') was not found';
@@ -134,6 +146,4 @@ class  action_plugin_api extends DokuWiki_Action_Plugin
             echo json_encode($data);
         }
     }
-
-
 }
